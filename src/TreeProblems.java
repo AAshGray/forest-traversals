@@ -1,5 +1,8 @@
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class TreeProblems {
 
@@ -28,6 +31,14 @@ public class TreeProblems {
    If the root is null, do nothing.
    */
   public static <T> void postOrder(Node<T> root) {
+    if (root == null) return;
+
+    if (root.children != null) {
+      for (Node<T> child : root.children){
+        postOrder(child);
+      }
+    }
+    System.out.println(root.value);
   }
 
   /*
@@ -55,6 +66,15 @@ public class TreeProblems {
    5
    */
   public static <T> void postOrder(Map<T, List<T>> tree, T root) {
+    if (root == null || !tree.containsKey(root)) return;
+
+    List<T> children = tree.get(root);
+    if (children != null) {
+      for (T child : children) {
+        postOrder(tree, child);
+      }
+    }
+    System.out.println(root);
   }
 
   /*
@@ -72,7 +92,23 @@ public class TreeProblems {
    A null tree should return 0
   */
   public static int sumTree(Node<Integer> root) {
-    return -1;
+    if (root == null) return 0;
+    int sum = 0;
+    Stack<Node<Integer>> stack = new Stack<>();
+
+    stack.add(root);
+    while (!stack.isEmpty()) {
+      Node<Integer> current = stack.pop();
+      if (current != null) {
+        sum+=current.value;
+        if (current.children != null) {
+          for (Node<Integer> child : current.children) {
+            stack.add(child);
+          }
+        }
+      }
+    }
+    return sum;
   }
 
   /*
@@ -95,7 +131,12 @@ public class TreeProblems {
    Hint: There's a simple way to do this!
   */
   public static int sumTree(Map<Integer, List<Integer>> tree) {
-    return -1;
+    if (tree == null) return 0;
+    int sum = 0;
+    for (int key : tree.keySet()) {
+      sum+=key;
+    }
+    return sum;
   }
 
   /*
@@ -118,7 +159,7 @@ public class TreeProblems {
    Hint: No recursion needed! Think about how you would do this by hand.
   */
   public static <T> T findRoot(Map<T, List<T>> tree) {
-    return null;
+    
   }
 
   /*
