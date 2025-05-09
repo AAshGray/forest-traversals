@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -66,8 +65,8 @@ public class TreeProblems {
    5
    */
   public static <T> void postOrder(Map<T, List<T>> tree, T root) {
-    if (root == null || !tree.containsKey(root)) return;
-
+    if (root == null || tree == null || !tree.containsKey(root)) return;
+    
     List<T> children = tree.get(root);
     if (children != null) {
       for (T child : children) {
@@ -159,7 +158,19 @@ public class TreeProblems {
    Hint: No recursion needed! Think about how you would do this by hand.
   */
   public static <T> T findRoot(Map<T, List<T>> tree) {
-    
+
+    List<T> children = new ArrayList<>();
+    for (List<T> list : tree.values()) {
+      children.addAll(list);
+    }
+
+    for (T key : tree.keySet()) {
+      if (!children.contains(key)) {
+
+        return key;
+      }
+    }
+    return null;
   }
 
   /*
@@ -181,9 +192,29 @@ public class TreeProblems {
    
   */
   public static <T> int maxDepth(Node<T> root) {
-    return -1;
-  }
+    if (root == null) return 0;
 
+    int level = 1;
+
+    return maxDepthHelper(root, level);
+  }
+  
+  public static <T> int maxDepthHelper(Node<T> current, int level) {
+    int maxDepthValue = 0;
+    if (current == null) return maxDepthValue;
+
+    // if we don't have any children, report what depth we got to
+    if (current.children == null || current.children.isEmpty()) return level;
+    
+    // explore children and record depths being passed back up the chain
+    
+    for (Node<T> child : current.children) {
+      maxDepthValue = Math.max(maxDepthValue, maxDepthHelper(child, level + 1));
+    }
+
+    // return max depth up intermediate (non-leaf) nodes
+    return maxDepthValue;
+  }
   /*
    maxDepth (Map Version)
    -----------
@@ -203,6 +234,25 @@ public class TreeProblems {
    Hint: Use findRoot to start. Then, make a recursive helper method.
   */
   public static int maxDepth(Map<String, List<String>> tree) {
-    return -1;
+    if (tree == null) return 0;
+    String root = findRoot(tree);
+    int level = 1; // root is level 1
+
+    return maxDepthHelper(tree, root, level);
+  }
+
+  public static int maxDepthHelper(Map<String, List<String>> tree, String key, int level) {
+    if (!tree.containsKey(key)) return 0; // all valid nodes should also be a key
+    
+    List<String> children = new ArrayList<>(tree.get(key));
+
+    if (children == null || children.isEmpty()) return level; // if we have no children this is a leaf
+    
+    int maxDepthValue = 0;
+    for (String childKey : children) {
+      maxDepthValue = Math.max(maxDepthValue, maxDepthHelper(tree, childKey, level + 1));
+    }
+
+    return maxDepthValue;
   }
 }
